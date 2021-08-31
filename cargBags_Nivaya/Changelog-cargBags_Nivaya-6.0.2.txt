@@ -1,0 +1,91 @@
+------------------------------------------------------------------------
+r22 | humfras | 2014-10-16 21:39:13 +0000 (Thu, 16 Oct 2014) | 1 line
+Changed paths:
+   A /tags/6.0.2 (from /trunk:21)
+
+Tagging as 6.0.2
+------------------------------------------------------------------------
+r21 | humfras | 2014-10-16 21:37:03 +0000 (Thu, 16 Oct 2014) | 1 line
+Changed paths:
+   M /trunk/cargBags/mixins-add/default.scaffold.lua
+
+- removed unwanted debug print
+------------------------------------------------------------------------
+r20 | humfras | 2014-10-16 21:36:18 +0000 (Thu, 16 Oct 2014) | 2 lines
+Changed paths:
+   M /trunk/cargBags/mixins-add/default.scaffold.lua
+
+* fixed upgraded item level display
++ item level display now available for all languages
+------------------------------------------------------------------------
+r18 | humfras | 2014-10-16 20:21:00 +0000 (Thu, 16 Oct 2014) | 3 lines
+Changed paths:
+   M /trunk/cargBags/mixins-add/plugins/bagBar.lua
+   A /trunk/media/CloseButton
+   A /trunk/media/CloseButton/UI-Panel-MinimizeButton-Disabled.blp
+   A /trunk/media/CloseButton/UI-Panel-MinimizeButton-Down.blp
+   A /trunk/media/CloseButton/UI-Panel-MinimizeButton-Highlight.blp
+   A /trunk/media/CloseButton/UI-Panel-MinimizeButton-Up.blp
+   M /trunk/style.lua
+
+* fixed BankBagButton OnEnter/OnClick bug
+* fixed debug print
++ changed CloseButton skin
+------------------------------------------------------------------------
+r17 | humfras | 2014-10-16 19:52:56 +0000 (Thu, 16 Oct 2014) | 2 lines
+Changed paths:
+   M /trunk/cargBags/base/implementation.lua
+   M /trunk/cargBags/mixins-add/plugins/bagBar.lua
+
+* fixed BankBagButton OnEnter bug
+* fixed debug print
+------------------------------------------------------------------------
+r15 | humfras | 2014-10-14 23:05:26 +0000 (Tue, 14 Oct 2014) | 1 line
+Changed paths:
+   M /trunk/style.lua
+
+bugfix
+------------------------------------------------------------------------
+r14 | humfras | 2014-10-13 08:50:48 +0000 (Mon, 13 Oct 2014) | 3 lines
+Changed paths:
+   M /trunk/cargBags/base/implementation.lua
+   M /trunk/cargBags/base/itembutton.lua
+   M /trunk/cargBags/mixins/parseBags.lua
+   M /trunk/cargBags/mixins-add/default.scaffold.lua
+   M /trunk/cargBags/mixins-add/plugins/tagDisplay.lua
+   M /trunk/cargBags/tests/README.mkd
+   M /trunk/cargBags_Nivaya.lua
+   M /trunk/cargBags_Nivaya.toc
+   M /trunk/config.lua
+   M /trunk/filters.lua
+   M /trunk/localization.lua
+   A /trunk/media/BagHighlight.BLP
+   A /trunk/media/BagSlot.BLP
+   A /trunk/media/BagToggle.BLP
+   A /trunk/media/Config.BLP
+   A /trunk/media/Deposit.BLP
+   A /trunk/media/Down.BLP
+   A /trunk/media/Left.BLP
+   A /trunk/media/ResetNew.BLP
+   A /trunk/media/ResetNew_Large.BLP
+   A /trunk/media/Restack.BLP
+   A /trunk/media/Right.BLP
+   A /trunk/media/Search.BLP
+   A /trunk/media/SellJunk.BLP
+   A /trunk/media/TooltipIcon.BLP
+   A /trunk/media/Up.BLP
+   A /trunk/media/glowTex.BLP
+   A /trunk/media/texture.BLP
+   M /trunk/style.lua
+
+Update for 6.0
+
+Should be working with or without RealUI (no compatibility issues anymore!)
+------------------------------------------------------------------------
+r13 | humfras | 2013-10-13 13:52:37 +0000 (Sun, 13 Oct 2013) | 2 lines
+Changed paths:
+   M /trunk/cargBags_Nivaya.lua
+
+- added additional cancel button in the dropdown list
+- various minor code changes
+------------------------------------------------------------------------

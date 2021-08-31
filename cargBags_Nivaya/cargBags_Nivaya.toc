@@ -1,0 +1,19 @@
+## Interface: 30300
+## Title: cargBags_Nivaya: |cffffffffReal|r|cffbf3030UI|r
+## Notes: Backport by https://github.com/nullfoxh
+## Author: Luzzifus (Modified by Nibelheim, humfras)
+## OptionalDeps: nibRealUI, ItemRack, Outfitter
+## SavedVariables: cBnivCfg, cB_CustomBags, cBniv_CatInfo
+## SavedVariablesPerCharacter: cB_KnownItems, cBniv
+## X-Curse-Packaged-Version: 6.0.2
+## X-Curse-Project-Name: cargBags Nivaya (RealUI/standalone)
+## X-Curse-Project-ID: cargbags-nivaya-mop-update
+## X-Curse-Repository-ID: wow/cargbags-nivaya-mop-update/mainline
+
+config.lua
+
+cargBags\embed.xml
+localization.lua
+filters.lua
+cargBags_Nivaya.lua
+style.lua

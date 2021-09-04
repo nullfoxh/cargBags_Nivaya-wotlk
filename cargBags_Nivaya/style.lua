@@ -723,7 +723,7 @@ function MyContainer:OnCreate(name, settings)
 			if self.reagentBtn then numButtons = numButtons + 1; tinsert(btnTable, self.reagentBtn) end
 		end
 		local ttPos = -(numButtons * 15 + 20)
-		if tBank then ttPos = ttPos + 3 end
+		if tBank then ttPos = ttPos + 20 end
 		for k,v in pairs(btnTable) do
 			v.tooltip:ClearAllPoints()
 			v.tooltip:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", ttPos, 5.5)

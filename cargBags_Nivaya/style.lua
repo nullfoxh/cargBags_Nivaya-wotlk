@@ -692,6 +692,7 @@ function MyContainer:OnCreate(name, settings)
 		end
 		
 		-- Button to send reagents to Reagent Bank:
+		--[[
 		if tBank then
 			local rbHint = REAGENTBANK_DEPOSIT
 			self.reagentBtn = createIconButton("SendReagents", self, Textures.Deposit, "BOTTOMRIGHT", rbHint, tBag)
@@ -707,12 +708,13 @@ function MyContainer:OnCreate(name, settings)
 				DepositReagentBank()
 			end)
 		end
+		]]
 
 		-- Tooltip positions
 		local numButtons = 2
 		local btnTable = {self.bagToggle}
 		if self.optionsBtn then numButtons = numButtons + 1; tinsert(btnTable, self.optionsBtn) end
-		if self.restackBtn then numButtons = numButtons + 1; tinsert(btnTable, self.restackBtn) end
+		--if self.restackBtn then numButtons = numButtons + 1; tinsert(btnTable, self.restackBtn) end
 		if tBag then
 			if self.resetBtn then numButtons = numButtons + 1; tinsert(btnTable, self.resetBtn) end
 			if self.junkBtn then numButtons = numButtons + 1; tinsert(btnTable, self.junkBtn) end

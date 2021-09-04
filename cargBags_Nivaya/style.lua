@@ -582,12 +582,12 @@ function MyContainer:OnCreate(name, settings)
 		self.bagToggle:SetScript("OnClick", function()
 			if(self.BagBar:IsShown()) then 
 				self.BagBar:Hide()
-			--	if self.hint then self.hint:Show() end
-			--	self.hintShown = true
+				if self.hint then self.hint:Show() end
+					self.hintShown = true
 			else
 				self.BagBar:Show()
-			--	if self.hint then self.hint:Hide() end
-			--	self.hintShown = false
+				if self.hint then self.hint:Hide() end
+				self.hintShown = false
 			end
 			self:UpdateDimensions()
 		end)

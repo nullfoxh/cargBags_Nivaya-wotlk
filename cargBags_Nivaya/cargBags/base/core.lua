@@ -81,12 +81,12 @@ function cargBags:ReplaceBlizzard(name)
 	self.blizzard = impl
 
 	-- Can we maybe live without hooking ToggleBag(id)?
-	ToggleAllBags = toggleNoForce
-	ToggleBag = toggleNoForce
-	ToggleBackpack = toggleNoForce
+	ToggleAllBags = openBag
+	ToggleBag = openBag
+	ToggleBackpack = openBag
 
-	OpenAllBags = toggleBag	-- Name is misleading, Blizz-function actually toggles bags
-	OpenBackpack = toggleBag -- Blizz does not provide toggling here
+	OpenAllBags = toggleNoForce	-- Name is misleading, Blizz-function actually toggles bags
+	OpenBackpack = openBag -- Blizz does not provide toggling here
 	CloseAllBags = closeBag
 	CloseBackpack = closeBag
 

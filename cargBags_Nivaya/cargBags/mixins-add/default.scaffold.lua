@@ -77,7 +77,7 @@ local function CreateInfoString(button, position)
 		str:SetPoint("TOPLEFT", button, "TOPLEFT", 1.5, -1.5)
 	else
 		str:SetJustifyH("RIGHT")
-		str:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 1.5, 1.5)
+		str:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 3)
 	end	
 	local font = (RealUI and RealUI.font.pixel1) or ns.options.fonts.itemCount
 	str:SetFont(unpack(font))

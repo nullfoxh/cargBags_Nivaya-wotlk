@@ -594,43 +594,26 @@ function MyContainer:OnCreate(name, settings)
 
 		-- keyring button
 		if tBag then
-			self.keyRing = createIconButton("Keyring", self, Textures.Keyring, "BOTTOMRIGHT", KEYRING, tBag)
+			self.keyRing = createIconButton("Keyring", self, Textures.Keyring, "BOTTOMRIGHT", "Keyring", tBag)
 			self.keyRing:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
 			self.keyRing:SetScript("OnClick", function()
 				if (CursorHasItem()) then
 					PutKeyInKeyRing()
 				else
-					if IsModifierKeyDown() then
-						for bagID = 0, 4 do
-							local slots = GetContainerNumSlots(bagID)
-							for slotID = 1,slots do
-								local itemLink = GetContainerItemLink(bagID, slotID)
-								if itemLink then
-									local itemID, itemType, itemSubType, itemEquipLoc, icon, itemClassID, itemSubClassID = GetItemInfoInstant(itemLink)
-									if itemClassID == LE_ITEM_CLASS_KEY then
-										ClearCursor()
-										PickupContainerItem(bagID, slotID)
-										PutKeyInKeyRing()
-									end
-								end
-							end
-						end
-					else
-						local f = NivayacBniv_Keyring
-						if f then
-							if f:IsShown() then
-								f:Hide()
-							else
-								f:Show()
-							end
+					local f = NivayacBniv_Keyring
+					if f then
+						if f:IsShown() then
+							f:Hide()
+						else
+							f:Show()
 						end
 					end
-				end	
+				end
 			end)
 			self.keyRing:SetScript("OnReceiveDrag", function()
 				if (CursorHasItem()) then
 					PutKeyInKeyRing()
-				end	
+				end
 			end)
 		end
 

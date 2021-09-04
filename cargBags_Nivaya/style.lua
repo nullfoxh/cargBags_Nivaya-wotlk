@@ -642,6 +642,7 @@ function MyContainer:OnCreate(name, settings)
 		end
 		
 		-- Button to restack items:
+		--[[
 		if cBnivCfg.Restack then
 			self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack", tBag)
 			if self.resetBtn then
@@ -651,6 +652,7 @@ function MyContainer:OnCreate(name, settings)
 			end
 			self.restackBtn:SetScript("OnClick", function() restackItems(self) end)
 		end
+		]]
 		
 		-- Button to show /cbniv options:
 		self.optionsBtn = createIconButton("Options", self, Textures.Config, "BOTTOMRIGHT", "Options", tBag)

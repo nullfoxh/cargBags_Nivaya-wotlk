@@ -644,7 +644,7 @@ function MyContainer:OnCreate(name, settings)
 		elseif self.resetBtn then
 			self.optionsBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
 		else
-			self.optionsBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
+			self.optionsBtn:SetPoint("BOTTOMRIGHT", self.keyRing, "BOTTOMLEFT", 0, 0)
 		end
 		self.optionsBtn:SetScript("OnClick", function() 
 			SlashCmdList.CBNIV("")

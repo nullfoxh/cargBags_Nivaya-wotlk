@@ -624,18 +624,16 @@ function MyContainer:OnCreate(name, settings)
 			self.resetBtn:SetScript("OnClick", function() resetNewItems(self) end)
 		end
 		
-		-- Button to restack items:
-		--[[
-		if cBnivCfg.Restack then
+		-- Restack and Sort, if we have MrPlow addon enabled.
+		if cBnivCfg.Restack and select(4,GetAddOnInfo("MrPlow")) then
 			self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack", tBag)
 			if self.resetBtn then
 				self.restackBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
 			else
-				self.restackBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
+				self.restackBtn:SetPoint("BOTTOMRIGHT", self.keyRing, "BOTTOMLEFT", -2, 0)
 			end
-			self.restackBtn:SetScript("OnClick", function() restackItems(self) end)
+			self.restackBtn:SetScript("OnClick", function() MrPlow:DoStuff("theworks") end)
 		end
-		]]
 		
 		-- Button to show /cbniv options:
 		self.optionsBtn = createIconButton("Options", self, Textures.Config, "BOTTOMRIGHT", "Options", tBag)
@@ -697,7 +695,7 @@ function MyContainer:OnCreate(name, settings)
 		local numButtons = 2
 		local btnTable = {self.bagToggle}
 		if self.optionsBtn then numButtons = numButtons + 1; tinsert(btnTable, self.optionsBtn) end
-		--if self.restackBtn then numButtons = numButtons + 1; tinsert(btnTable, self.restackBtn) end
+		if self.restackBtn then numButtons = numButtons + 1; tinsert(btnTable, self.restackBtn) end
 		if tBag then
 			if self.resetBtn then numButtons = numButtons + 1; tinsert(btnTable, self.resetBtn) end
 			if self.junkBtn then numButtons = numButtons + 1; tinsert(btnTable, self.junkBtn) end

@@ -591,13 +591,14 @@ local function HandleSlash(str)
 		SetFrameMovable(cB_Bags.main, cBnivCfg.Unlocked)
 		SetFrameMovable(cB_Bags.bank, cBnivCfg.Unlocked)
 		StatusMsg('Movable bags are now ', '.', cBnivCfg.Unlocked, true, false)
+	--[[
 	elseif str == 'sortbags' then
 		cBnivCfg.SortBags = not cBnivCfg.SortBags
 		StatusMsg('Auto sorting bags is now ', '. Reload your UI for this change to take effect!', cBnivCfg.SortBags, true, false)
 	elseif str == 'sortbank' then
 		cBnivCfg.SortBank = not cBnivCfg.SortBank
 		StatusMsg('Auto sorting bank is now ', '. Reload your UI for this change to take effect!', cBnivCfg.SortBank, true, false)
-
+	]]
 	elseif str == 'scale' then
 		local t = tonumber(str2)
 		if t then
@@ -656,7 +657,7 @@ local function HandleSlash(str)
 		StatusMsg('(', ') |cFFFFFF00quest|r - Toggle the "Quest" filters.', cBnivCfg.Quest, false, true)
 		StatusMsg('(', ') |cFFFFFF00bankbg|r - Toggle black bank background color.', cBnivCfg.BankBlack, false, true)
 		StatusMsg('(', ') |cFFFFFF00bankfilter|r - Toggle bank filtering.', cBnivCfg.FilterBank, false, true)
-		StatusMsg('(', ') |cFFFFFF00empty|r - Toggle empty bagspace compression.', cBnivCfg.CompressEmpty, false, true)
+		--StatusMsg('(', ') |cFFFFFF00empty|r - Toggle empty bagspace compression.', cBnivCfg.CompressEmpty, false, true)
 		--StatusMsg('(', ') |cFFFFFF00sortbags|r - Toggle auto sorting the bags.', cBnivCfg.SortBags, false, true)
 		--StatusMsg('(', ') |cFFFFFF00sortbank|r - Toggle auto sorting the bank.', cBnivCfg.SortBank, false, true)
 		StatusMsgVal('(', ') |cFFFFFF00scale|r [number] - Set the overall scale.', cBnivCfg.scale, false)

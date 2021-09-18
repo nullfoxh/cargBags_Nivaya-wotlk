@@ -1,0 +1,25 @@
+## Interface: 30200
+## Title: Mr Plow
+## Author: Wobin
+## Notes: Regain that wasted space!
+## Version: 10.1
+## X-Category: Inventory
+## LoadOnDemand: 0
+## SavedVariables: MrPlowDB
+## SavedVariablesPerCharacter: MrPlowIgnoreDB
+## OptionalDeps: Ace3, LibPeriodicTable-3.1, LibDBIcon-1.0
+## X-Curse-Packaged-Version: v10.2.6.5-Beta
+## X-Curse-Project-Name: MrPlow
+## X-Curse-Project-ID: mr-plow
+## X-Curse-Repository-ID: wow/mr-plow/mainline
+
+embeds.xml
+
+Locale\Localization.enUS.lua
+Locale\Localization.deDE.lua
+
+LibDataBroker-1.1.lua
+
+MrPlow.lua
+PlowEngine.lua
+PlowOptions.lua

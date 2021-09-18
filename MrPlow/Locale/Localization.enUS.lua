@@ -1,0 +1,16 @@
+local L = LibStub("AceLocale-3.0"):NewLocale("MrPlow", "enUS", true)
+L["Armor"] = "Armor"
+L["Consumable"] = "Consumable"
+L["Container"] = "Container"
+L["Gem"] = "Gem"
+L["Key"] = "Key"
+L["Miscellaneous"] = "Miscellaneous"
+L["Projectile"] = "Projectile"
+L["Quest"] = "Quest"
+L["Glyph"] = "Glyph"
+L["Quiver"] = "Quiver"
+L["Reagent"] = "Reagent"
+L["Recipe"] = "Recipe"
+L["Trade Goods"] = "Trade Goods"
+L["Weapon"] = "Weapon"
+

@@ -1,0 +1,8 @@
+2010-07-12  wobin  <wobin>
+
+[d1608bd3f9c1] [v10.2.6.5-Beta]
+* .hgtags:
+
+Added tag v10.2.6.4-Beta for changeset 7eebdb5a1689
+
+

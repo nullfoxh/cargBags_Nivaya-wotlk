@@ -69,28 +69,30 @@ function cargBags:GetImplementation(name)
 	return self.classes.Implementation:Get(name)
 end
 
-local function toggleBag(forceopen)	cargBags.blizzard:Toggle(forceopen)	end
-local function toggleNoForce()		cargBags.blizzard:Toggle()			end
-local function openBag()				cargBags.blizzard:Show()			end
-local function closeBag()				cargBags.blizzard:Hide()			end
+local function toggleNoForce()             cargBags.blizzard:Toggle() end
+local function toggleBag(_bagID)           cargBags.blizzard:Toggle() end
+local function toggleBackpack()            cargBags.blizzard:Toggle() end
+local function openBag()                   cargBags.blizzard:Show() end
+local function closeBag()                  cargBags.blizzard:Hide() end
 
 --- Overwrites Blizzards Bag-Toggle-Functions with the implementation's ones
 --  @param name <string> The name of the implementation [optional]
 function cargBags:ReplaceBlizzard(name)
-	local impl = arg1 and cargBags:GetImplementation(name) or self.blizzard
-	self.blizzard = impl
+    local impl = name and cargBags:GetImplementation(name) or self.blizzard
+    self.blizzard = impl
 
-	-- Can we maybe live without hooking ToggleBag(id)?
-	ToggleAllBags = openBag
-	ToggleBag = openBag
-	ToggleBackpack = openBag
+    ToggleAllBags   = toggleNoForce
+    ToggleBag       = toggleBag
+    ToggleBackpack  = toggleBackpack
 
-	OpenAllBags = toggleNoForce	-- Name is misleading, Blizz-function actually toggles bags
-	OpenBackpack = openBag -- Blizz does not provide toggling here
-	CloseAllBags = closeBag
-	CloseBackpack = closeBag
+    OpenAllBags     = openBag
+    OpenBackpack    = openBag
+    CloseAllBags    = closeBag
+    CloseBackpack   = closeBag
 
-	BankFrame:UnregisterAllEvents()
+    if BankFrame then
+        BankFrame:UnregisterAllEvents()
+    end
 end
 
 --- Flags the implementation to handle Blizzards Bag-Toggle-Functions

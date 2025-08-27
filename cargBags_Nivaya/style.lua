@@ -23,6 +23,25 @@ local Textures = {
 }
 
 local itemSlotSize = ns.options.itemSlotSize
+
+------------------------------------------
+-- Pixel Perfect Parent Frame
+------------------------------------------
+local PixelPerfectParent = CreateFrame("Frame", "cB_PixelParent", UIParent)
+PixelPerfectParent:SetAllPoints(UIParent)
+
+local function ApplyPixelParentScale()
+    local _, h = string.match(GetCVar("gxResolution"), "(%d+)x(%d+)")
+    h = tonumber(h) or 768
+    local desiredEffective = 768 / h
+    local parentEff        = UIParent:GetEffectiveScale()
+    if not parentEff or parentEff == 0 then parentEff = 1 end
+    PixelPerfectParent:SetScale(desiredEffective / parentEff)
+end
+
+PixelPerfectParent:RegisterEvent("PLAYER_LOGIN")
+PixelPerfectParent:SetScript("OnEvent", ApplyPixelParentScale)
+
 ------------------------------------------
 -- MyContainer specific
 ------------------------------------------
@@ -35,6 +54,9 @@ local function GetClassColor(class)
 	return {classColors.r, classColors.g, classColors.b}
 end
 
+local GetContainerNumFreeSlots, GetContainerNumSlots
+	= GetContainerNumFreeSlots, GetContainerNumSlots
+
 local GetNumFreeSlots = function(bagType)
 	local free, max = 0, 0
 	if bagType == "bag" then
@@ -42,10 +64,7 @@ local GetNumFreeSlots = function(bagType)
 			free = free + GetContainerNumFreeSlots(i)
 			max = max + GetContainerNumSlots(i)
 		end
-	elseif bagType == "bankReagent" then
-		free = GetContainerNumFreeSlots(-3)
-		max = GetContainerNumSlots(-3)
-	else
+	elseif bagType == "bank" then
 		local containerIDs = {-1,5,6,7,8,9,10,11}
 		for _,i in next, containerIDs do	
 			free = free + GetContainerNumFreeSlots(i)
@@ -57,6 +76,7 @@ end
 
 local QuickSort;
 do
+	local table_sort = table.sort
 	local func = function(v1, v2)
 		if (v1 == nil) or (v2 == nil) then return (v1 and true or false) end
 		if v1[1] == -1 or v2[1] == -1 then
@@ -75,7 +95,7 @@ do
 			return v1[4] > v2[4] -- full/larger stacks first
 		end
 	end;
-	QuickSort = function(tbl) table.sort(tbl, func) end
+	QuickSort = function(tbl) table_sort(tbl, func) end
 end
 
 function MyContainer:OnContentsChanged()
@@ -87,7 +107,6 @@ function MyContainer:OnContentsChanged()
 	local tName = self.name
 	local tBankBags = string.find(tName, "cBniv_Bank%a+")
 	local tBank = tBankBags or (tName == "cBniv_Bank")
-	local tReagent = (tName == "cBniv_BankReagent")
 
 	local buttonIDs = {}
   	for i, button in pairs(self.buttons) do
@@ -98,7 +117,9 @@ function MyContainer:OnContentsChanged()
 			buttonIDs[i] = { -1, -2, button, -1 }
 		end
 	end
-	if ((tBank or tReagent) and cBnivCfg.SortBank) or (not (tBank or tReagent) and cBnivCfg.SortBags) then QuickSort(buttonIDs) end
+	if (tBank and cBnivCfg.SortBank) or (not tBank and cBnivCfg.SortBags) then
+		QuickSort(buttonIDs)
+	end
 
 	for _,v in ipairs(buttonIDs) do
 		local button = v[3]
@@ -135,14 +156,13 @@ function MyContainer:OnContentsChanged()
 		
 		cB_Bags.main.EmptySlotCounter:SetText(GetNumFreeSlots("bag"))
 		cB_Bags.bank.EmptySlotCounter:SetText(GetNumFreeSlots("bank"))
-		cB_Bags.bankReagent.EmptySlotCounter:SetText(GetNumFreeSlots("bankReagent"))
 	end
 	
 	-- This variable stores the size of the item button container
 	self.ContainerHeight = (row + (col > 0 and 1 or 0)) * (itemSlotSize + 2)
 
 	if (self.UpdateDimensions) then self:UpdateDimensions() end -- Update the bag's height
-	local t = (tName == "cBniv_Bag") or (tName == "cBniv_Bank") or (tName == "cBniv_BankReagent")
+	local t = (tName == "cBniv_Bag") or (tName == "cBniv_Bank")
 	local tAS = (tName == "cBniv_Ammo") or (tName == "cBniv_Soulshards")
 	if (not tBankBags and cB_Bags.main:IsShown() and not (t or tAS)) or (tBankBags and cB_Bags.bank:IsShown()) then 
 		if isEmpty then self:Hide() else self:Show() end 
@@ -151,6 +171,7 @@ function MyContainer:OnContentsChanged()
 	cB_BagHidden[tName] = (not t) and isEmpty or false
 	cbNivaya:UpdateAnchors(self)
 end
+
 
 --[[function MyContainer:OnButtonAdd(button)
 	if not button.Border then return end
@@ -198,16 +219,18 @@ JS:SetScript("OnEvent", function() SellJunk() end)
 
 -- Restack Items
 local restackItems = function(self)
-	local tBag, tBank = (self.name == "cBniv_Bag"), (self.name == "cBniv_Bank")
-	--local loc = tBank and "bank" or "bags"
-	--[[
-	if tBank then
-		SortBankBags()
-		SortReagentBankBags()
-	elseif tBag then
-		SortBags()
+	if not MrPlow then
+		print("MrPlow addon needed for restack and sort. Please get it from the repository: https://github.com/nullfoxh/cargBags_Nivaya-wotlk")
+		return
 	end
-	]]
+
+	local tBag, tBank = (self.name == "cBniv_Bag"), (self.name == "cBniv_Bank")
+	
+	if tBag then
+		MrPlow:DoStuff("theworks")
+	elseif tBank then
+		MrPlow:DoStuff("banktheworks")
+	end
 end
 
 -- Reset New
@@ -230,6 +253,7 @@ local resetNewItems = function(self)
 	end
 	cbNivaya:UpdateBags()
 end
+
 function cbNivResetNew()
 	resetNewItems()
 end
@@ -368,7 +392,6 @@ local createIconButton = function (name, parent, texture, point, hint, isBag)
 	return button
 end
 
-
 local GetFirstFreeSlot = function(bagtype)
 	if bagtype == "bag" then
 		for i = 0,4 do
@@ -381,17 +404,7 @@ local GetFirstFreeSlot = function(bagtype)
 				end
 			end
 		end
-	elseif bagtype == "bankReagent" then
-		local bagID = -3
-		local t = GetContainerNumFreeSlots(bagID)
-		if t > 0 then
-			local tNumSlots = GetContainerNumSlots(bagID)
-			for j = 1,tNumSlots do
-				local tLink = GetContainerItemLink(bagID,j)
-				if not tLink then return bagID,j end
-			end
-		end
-	else
+	elseif bagtype == "bank" then
 		local containerIDs = {-1,5,6,7,8,9,10,11}
 		for _,i in next, containerIDs do
 			local t = GetContainerNumFreeSlots(i)
@@ -408,23 +421,24 @@ local GetFirstFreeSlot = function(bagtype)
 end
 
 function MyContainer:OnCreate(name, settings)
-	--print("MyContainer:OnCreate", name)
+
+	-- Re-parent to pixel-perfect parent
+    self:SetParent(PixelPerfectParent)
+
 	local font = (RealUI and RealUI.font.pixel1) or ns.options.fonts.standard
 	
 	settings = settings or {}
 	self.Settings = settings
 	self.name = name
 
-	local tBag, tBank, tReagent = (name == "cBniv_Bag"), (name == "cBniv_Bank"), (name == "cBniv_BankReagent")
+	local tBag, tBank= (name == "cBniv_Bag"), (name == "cBniv_Bank")
 	local tBankBags = string.find(name, "Bank")
 
 	local numSlotsBag = {GetNumFreeSlots("bag")}
 	local numSlotsBank = {GetNumFreeSlots("bank")}
-	local numSlotsReagent = {GetNumFreeSlots("bankReagent")}
 	
 	local usedSlotsBag = numSlotsBag[2] - numSlotsBag[1]
 	local usedSlotsBank = numSlotsBank[2] - numSlotsBank[1]
-	local usedSlotsReagent = numSlotsReagent[2] - numSlotsReagent[1]
 
 	self:EnableMouse(true)
 	
@@ -439,8 +453,6 @@ function MyContainer:OnCreate(name, settings)
 
 	if (tBank or tBankBags) then
 		self.Columns = (usedSlotsBank > ns.options.sizes.bank.largeItemCount) and ns.options.sizes.bank.columnsLarge or ns.options.sizes.bank.columnsSmall
-	elseif (tReagent) then
-		self.Columns = (usedSlotsReagent > ns.options.sizes.bank.largeItemCount) and ns.options.sizes.bank.columnsLarge or ns.options.sizes.bank.columnsSmall
 	else
 		self.Columns = (usedSlotsBag > ns.options.sizes.bags.largeItemCount) and ns.options.sizes.bags.columnsLarge or ns.options.sizes.bags.columnsSmall
 	end
@@ -576,7 +588,7 @@ function MyContainer:OnCreate(name, settings)
 		-- main window gets a fake bag button for toggling key ring
 		self.BagBar = bagButtons
 		
-		-- We don't need the bag bar every time, so let's create a toggle button for them to show
+		-- Toggle Bags button
 		self.bagToggle = createIconButton("Bags", self, Textures.BagToggle, "BOTTOMRIGHT", "Toggle Bags", tBag)
 		self.bagToggle:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
 		self.bagToggle:SetScript("OnClick", function()
@@ -592,7 +604,7 @@ function MyContainer:OnCreate(name, settings)
 			self:UpdateDimensions()
 		end)
 
-		-- keyring button
+		-- Keyring button
 		if tBag then
 			self.keyRing = createIconButton("Keyring", self, Textures.Keyring, "BOTTOMRIGHT", "Keyring", tBag)
 			self.keyRing:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
@@ -617,40 +629,47 @@ function MyContainer:OnCreate(name, settings)
 			end)
 		end
 
-		-- Button to reset new items:
+		-- Reset New Items button
 		if tBag and cBnivCfg.NewItems then
 			self.resetBtn = createIconButton("ResetNew", self, Textures.ResetNew, "BOTTOMRIGHT", "Reset New", tBag)
 			self.resetBtn:SetPoint("BOTTOMRIGHT", self.keyRing, "BOTTOMLEFT", -2, 0)
 			self.resetBtn:SetScript("OnClick", function() resetNewItems(self) end)
 		end
-		
-		-- Restack and Sort, if we have MrPlow addon enabled.
-		if cBnivCfg.Restack and select(4,GetAddOnInfo("MrPlow")) then
-			self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack", tBag)
-			if self.resetBtn then
-				self.restackBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
-			else
-				self.restackBtn:SetPoint("BOTTOMRIGHT", self.keyRing, "BOTTOMLEFT", -2, 0)
+
+		-- Restack and Sort button (if MrPlow addon is enabled)
+		if cBnivCfg.Restack and select(4, GetAddOnInfo("MrPlow")) then
+			self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack", tBag or tBank)
+			self.restackBtn:SetScript("OnClick", function() restackItems(self) end)
+
+			if tBag then
+				-- in the bag frame
+				if self.resetBtn then
+					self.restackBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
+				else
+					self.restackBtn:SetPoint("BOTTOMRIGHT", self.keyRing, "BOTTOMLEFT", -2, 0)
+				end
+			elseif tBank then
+				-- in the bank frame (no keyRing/resetBtn there)
+				self.restackBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", -2, 0)
 			end
-			self.restackBtn:SetScript("OnClick", function() MrPlow:DoStuff("theworks") end)
 		end
 		
-		-- Button to show /cbniv options:
-		self.optionsBtn = createIconButton("Options", self, Textures.Config, "BOTTOMRIGHT", "Options", tBag)
-		if self.restackBtn then
-			self.optionsBtn:SetPoint("BOTTOMRIGHT", self.restackBtn, "BOTTOMLEFT", 0, 0)
-		elseif self.resetBtn then
-			self.optionsBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
-		else
-			self.optionsBtn:SetPoint("BOTTOMRIGHT", self.keyRing, "BOTTOMLEFT", 0, 0)
-		end
-		self.optionsBtn:SetScript("OnClick", function() 
-			SlashCmdList.CBNIV("")
-			print("Usage: /cbniv |cffffff00command|r")
-		end)
-		
-		-- Button to toggle Sell Junk:
 		if tBag then
+			-- Print Options button 
+			self.optionsBtn = createIconButton("Options", self, Textures.Config, "BOTTOMRIGHT", "Options", tBag)
+			if self.restackBtn then
+				self.optionsBtn:SetPoint("BOTTOMRIGHT", self.restackBtn, "BOTTOMLEFT", 0, 0)
+			elseif self.resetBtn then
+				self.optionsBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
+			else
+				self.optionsBtn:SetPoint("BOTTOMRIGHT", self.keyRing, "BOTTOMLEFT", 0, 0)
+			end
+			self.optionsBtn:SetScript("OnClick", function() 
+				SlashCmdList.CBNIV("")
+				print("Usage: /cbniv |cffffff00command|r")
+			end)
+			
+			-- Sell Junk button
 			local sjHint = cBnivCfg.SellJunk and "Sell Junk |cffd0d0d0(on)|r" or "Sell Junk |cffd0d0d0(off)|r"
 			self.junkBtn = createIconButton("SellJunk", self, Textures.SellJunk, "BOTTOMRIGHT", sjHint, tBag)
 			if self.optionsBtn then
@@ -662,6 +681,7 @@ function MyContainer:OnCreate(name, settings)
 			else
 				self.junkBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
 			end
+
 			self.junkBtn:SetScript("OnClick", function() 
 				cBnivCfg.SellJunk = not(cBnivCfg.SellJunk)
 				if cBnivCfg.SellJunk then
@@ -671,41 +691,20 @@ function MyContainer:OnCreate(name, settings)
 				end
 			end)
 		end
-		
-		-- Button to send reagents to Reagent Bank:
-		--[[
-		if tBank then
-			local rbHint = REAGENTBANK_DEPOSIT
-			self.reagentBtn = createIconButton("SendReagents", self, Textures.Deposit, "BOTTOMRIGHT", rbHint, tBag)
-			if self.optionsBtn then
-				self.reagentBtn:SetPoint("BOTTOMRIGHT", self.optionsBtn, "BOTTOMLEFT", 0, 0)
-			elseif self.restackBtn then
-				self.reagentBtn:SetPoint("BOTTOMRIGHT", self.restackBtn, "BOTTOMLEFT", 0, 0)
-			else
-				self.reagentBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
-			end
-			self.reagentBtn:SetScript("OnClick", function()
-				--print("Deposit!!!")
-				DepositReagentBank()
-			end)
-		end
-		]]
 
 		-- Tooltip positions
-		local numButtons = 2
-		local btnTable = {self.bagToggle}
-		if self.optionsBtn then numButtons = numButtons + 1; tinsert(btnTable, self.optionsBtn) end
-		if self.restackBtn then numButtons = numButtons + 1; tinsert(btnTable, self.restackBtn) end
-		if tBag then
-			if self.resetBtn then numButtons = numButtons + 1; tinsert(btnTable, self.resetBtn) end
-			if self.junkBtn then numButtons = numButtons + 1; tinsert(btnTable, self.junkBtn) end
-		end
-		if tBank then
-			if self.reagentBtn then numButtons = numButtons + 1; tinsert(btnTable, self.reagentBtn) end
-		end
-		local ttPos = -(numButtons * 15 + 20)
-		if tBank then ttPos = ttPos + 20 end
-		for k,v in pairs(btnTable) do
+		local btnTable = { self.bagToggle }
+		if self.keyRing    then tinsert(btnTable, self.keyRing)    end
+		if self.optionsBtn then tinsert(btnTable, self.optionsBtn) end
+		if self.restackBtn then tinsert(btnTable, self.restackBtn) end
+		if self.resetBtn   then tinsert(btnTable, self.resetBtn)   end
+		if self.junkBtn    then tinsert(btnTable, self.junkBtn)    end
+		if self.reagentBtn then tinsert(btnTable, self.reagentBtn) end
+
+		local numButtons = #btnTable
+		local ttPos = -(numButtons * 17 + 9)
+
+		for _, v in ipairs(btnTable) do
 			v.tooltip:ClearAllPoints()
 			v.tooltip:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", ttPos, 5.5)
 			v.tooltipIcon:ClearAllPoints()
@@ -758,7 +757,7 @@ function MyContainer:OnCreate(name, settings)
 	if tBag then
 		local infoFrame = CreateFrame("Button", nil, self)
 		infoFrame:SetPoint("BOTTOMLEFT", 5, -6)
-		infoFrame:SetPoint("BOTTOMRIGHT", -86, -6)
+		infoFrame:SetPoint("BOTTOMRIGHT", -106, -6)
 		infoFrame:SetHeight(32)
 
 		-- Search bar
@@ -789,7 +788,7 @@ function MyContainer:OnCreate(name, settings)
 		money:SetShadowColor(0, 0, 0, 0)
 	end
 	
-	self:SetScale(cBnivCfg.scale)
+	self:SetScale(cBnivCfg.scale or 1)
 	return self
 end
 

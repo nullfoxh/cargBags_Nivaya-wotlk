@@ -107,7 +107,6 @@ function MyContainer:OnContentsChanged()
 	local tName = self.name
 	local tBankBags = string.find(tName, "cBniv_Bank%a+")
 	local tBank = tBankBags or (tName == "cBniv_Bank")
-	local tReagent = (tName == "cBniv_BankReagent")
 
 	local buttonIDs = {}
   	for i, button in pairs(self.buttons) do
@@ -118,7 +117,9 @@ function MyContainer:OnContentsChanged()
 			buttonIDs[i] = { -1, -2, button, -1 }
 		end
 	end
-	if ((tBank or tReagent) and cBnivCfg.SortBank) or (not (tBank or tReagent) and cBnivCfg.SortBags) then QuickSort(buttonIDs) end
+	if (tBank and cBnivCfg.SortBank) or (not tBank and cBnivCfg.SortBags) then
+		QuickSort(buttonIDs)
+	end
 
 	for _,v in ipairs(buttonIDs) do
 		local button = v[3]
@@ -155,14 +156,13 @@ function MyContainer:OnContentsChanged()
 		
 		cB_Bags.main.EmptySlotCounter:SetText(GetNumFreeSlots("bag"))
 		cB_Bags.bank.EmptySlotCounter:SetText(GetNumFreeSlots("bank"))
-		cB_Bags.bankReagent.EmptySlotCounter:SetText(GetNumFreeSlots("bankReagent"))
 	end
 	
 	-- This variable stores the size of the item button container
 	self.ContainerHeight = (row + (col > 0 and 1 or 0)) * (itemSlotSize + 2)
 
 	if (self.UpdateDimensions) then self:UpdateDimensions() end -- Update the bag's height
-	local t = (tName == "cBniv_Bag") or (tName == "cBniv_Bank") or (tName == "cBniv_BankReagent")
+	local t = (tName == "cBniv_Bag") or (tName == "cBniv_Bank")
 	local tAS = (tName == "cBniv_Ammo") or (tName == "cBniv_Soulshards")
 	if (not tBankBags and cB_Bags.main:IsShown() and not (t or tAS)) or (tBankBags and cB_Bags.bank:IsShown()) then 
 		if isEmpty then self:Hide() else self:Show() end 
@@ -401,17 +401,7 @@ local GetFirstFreeSlot = function(bagtype)
 				end
 			end
 		end
-	elseif bagtype == "bankReagent" then
-		local bagID = -3
-		local t = GetContainerNumFreeSlots(bagID)
-		if t > 0 then
-			local tNumSlots = GetContainerNumSlots(bagID)
-			for j = 1,tNumSlots do
-				local tLink = GetContainerItemLink(bagID,j)
-				if not tLink then return bagID,j end
-			end
-		end
-	else
+	elseif bagtype == "bank" then
 		local containerIDs = {-1,5,6,7,8,9,10,11}
 		for _,i in next, containerIDs do
 			local t = GetContainerNumFreeSlots(i)
@@ -460,8 +450,6 @@ function MyContainer:OnCreate(name, settings)
 
 	if (tBank or tBankBags) then
 		self.Columns = (usedSlotsBank > ns.options.sizes.bank.largeItemCount) and ns.options.sizes.bank.columnsLarge or ns.options.sizes.bank.columnsSmall
-	elseif (tReagent) then
-		self.Columns = (usedSlotsReagent > ns.options.sizes.bank.largeItemCount) and ns.options.sizes.bank.columnsLarge or ns.options.sizes.bank.columnsSmall
 	else
 		self.Columns = (usedSlotsBag > ns.options.sizes.bags.largeItemCount) and ns.options.sizes.bags.columnsLarge or ns.options.sizes.bags.columnsSmall
 	end

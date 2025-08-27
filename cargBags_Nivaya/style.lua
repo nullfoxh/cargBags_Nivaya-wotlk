@@ -23,6 +23,26 @@ local Textures = {
 }
 
 local itemSlotSize = ns.options.itemSlotSize
+
+------------------------------------------
+-- Pixel Perfect Parent Frame
+------------------------------------------
+---
+local PixelPerfectParent = CreateFrame("Frame", "cB_PixelParent", UIParent)
+PixelPerfectParent:SetAllPoints(UIParent)
+
+local function ApplyPixelParentScale()
+    local _, h = string.match(GetCVar("gxResolution"), "(%d+)x(%d+)")
+    h = tonumber(h) or 768
+    local desiredEffective = 768 / h
+    local parentEff        = UIParent:GetEffectiveScale()
+    if not parentEff or parentEff == 0 then parentEff = 1 end
+    PixelPerfectParent:SetScale(desiredEffective / parentEff)
+end
+
+PixelPerfectParent:RegisterEvent("PLAYER_LOGIN")
+PixelPerfectParent:SetScript("OnEvent", ApplyPixelParentScale)
+
 ------------------------------------------
 -- MyContainer specific
 ------------------------------------------
@@ -408,23 +428,24 @@ local GetFirstFreeSlot = function(bagtype)
 end
 
 function MyContainer:OnCreate(name, settings)
-	--print("MyContainer:OnCreate", name)
+
+	-- Re-parent to pixel-perfect parent
+    self:SetParent(PixelPerfectParent)
+
 	local font = (RealUI and RealUI.font.pixel1) or ns.options.fonts.standard
 	
 	settings = settings or {}
 	self.Settings = settings
 	self.name = name
 
-	local tBag, tBank, tReagent = (name == "cBniv_Bag"), (name == "cBniv_Bank"), (name == "cBniv_BankReagent")
+	local tBag, tBank= (name == "cBniv_Bag"), (name == "cBniv_Bank")
 	local tBankBags = string.find(name, "Bank")
 
 	local numSlotsBag = {GetNumFreeSlots("bag")}
 	local numSlotsBank = {GetNumFreeSlots("bank")}
-	local numSlotsReagent = {GetNumFreeSlots("bankReagent")}
 	
 	local usedSlotsBag = numSlotsBag[2] - numSlotsBag[1]
 	local usedSlotsBank = numSlotsBank[2] - numSlotsBank[1]
-	local usedSlotsReagent = numSlotsReagent[2] - numSlotsReagent[1]
 
 	self:EnableMouse(true)
 	

@@ -1,7 +1,7 @@
 ## Interface: 30300
 ## Title: cargBags_Nivaya: |cffffffffReal|r|cffbf3030UI|r
-## Notes: v1.3 Backport by https://github.com/nullfoxh
-## Author: Luzzifus (Modified by Nibelheim, humfras)
+## Notes: v1.4 Backport by https://github.com/nullfoxh
+## Author: Luzzifus (Backport by https://github.com/nullfoxh)
 ## OptionalDeps: nibRealUI, ItemRack, Outfitter
 ## SavedVariables: cBnivCfg, cB_CustomBags, cBniv_CatInfo
 ## SavedVariablesPerCharacter: cB_KnownItems, cBniv

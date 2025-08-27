@@ -215,16 +215,18 @@ JS:SetScript("OnEvent", function() SellJunk() end)
 
 -- Restack Items
 local restackItems = function(self)
-	local tBag, tBank = (self.name == "cBniv_Bag"), (self.name == "cBniv_Bank")
-	--local loc = tBank and "bank" or "bags"
-	--[[
-	if tBank then
-		SortBankBags()
-		SortReagentBankBags()
-	elseif tBag then
-		SortBags()
+	if not MrPlow then
+		print("MrPlow addon needed for restack and sort. Please get it from the repository: https://github.com/nullfoxh/cargBags_Nivaya-wotlk")
+		return
 	end
-	]]
+
+	local tBag, tBank = (self.name == "cBniv_Bag"), (self.name == "cBniv_Bank")
+	
+	if tBag then
+		MrPlow:DoStuff("theworks")
+	elseif tBank then
+		MrPlow:DoStuff("banktheworks")
+	end
 end
 
 -- Reset New
@@ -582,7 +584,7 @@ function MyContainer:OnCreate(name, settings)
 		-- main window gets a fake bag button for toggling key ring
 		self.BagBar = bagButtons
 		
-		-- We don't need the bag bar every time, so let's create a toggle button for them to show
+		-- Toggle Bags button
 		self.bagToggle = createIconButton("Bags", self, Textures.BagToggle, "BOTTOMRIGHT", "Toggle Bags", tBag)
 		self.bagToggle:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
 		self.bagToggle:SetScript("OnClick", function()
@@ -598,7 +600,7 @@ function MyContainer:OnCreate(name, settings)
 			self:UpdateDimensions()
 		end)
 
-		-- keyring button
+		-- Keyring button
 		if tBag then
 			self.keyRing = createIconButton("Keyring", self, Textures.Keyring, "BOTTOMRIGHT", "Keyring", tBag)
 			self.keyRing:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
@@ -623,40 +625,47 @@ function MyContainer:OnCreate(name, settings)
 			end)
 		end
 
-		-- Button to reset new items:
+		-- Reset New Items button
 		if tBag and cBnivCfg.NewItems then
 			self.resetBtn = createIconButton("ResetNew", self, Textures.ResetNew, "BOTTOMRIGHT", "Reset New", tBag)
 			self.resetBtn:SetPoint("BOTTOMRIGHT", self.keyRing, "BOTTOMLEFT", -2, 0)
 			self.resetBtn:SetScript("OnClick", function() resetNewItems(self) end)
 		end
-		
-		-- Restack and Sort, if we have MrPlow addon enabled.
-		if cBnivCfg.Restack and select(4,GetAddOnInfo("MrPlow")) then
-			self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack", tBag)
-			if self.resetBtn then
-				self.restackBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
-			else
-				self.restackBtn:SetPoint("BOTTOMRIGHT", self.keyRing, "BOTTOMLEFT", -2, 0)
+
+		-- Restack and Sort button (if MrPlow addon is enabled)
+		if cBnivCfg.Restack and select(4, GetAddOnInfo("MrPlow")) then
+			self.restackBtn = createIconButton("Restack", self, Textures.Restack, "BOTTOMRIGHT", "Restack", tBag or tBank)
+			self.restackBtn:SetScript("OnClick", function() restackItems(self) end)
+
+			if tBag then
+				-- in the bag frame
+				if self.resetBtn then
+					self.restackBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
+				else
+					self.restackBtn:SetPoint("BOTTOMRIGHT", self.keyRing, "BOTTOMLEFT", -2, 0)
+				end
+			elseif tBank then
+				-- in the bank frame (no keyRing/resetBtn there)
+				self.restackBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", -2, 0)
 			end
-			self.restackBtn:SetScript("OnClick", function() MrPlow:DoStuff("theworks") end)
 		end
 		
-		-- Button to show /cbniv options:
-		self.optionsBtn = createIconButton("Options", self, Textures.Config, "BOTTOMRIGHT", "Options", tBag)
-		if self.restackBtn then
-			self.optionsBtn:SetPoint("BOTTOMRIGHT", self.restackBtn, "BOTTOMLEFT", 0, 0)
-		elseif self.resetBtn then
-			self.optionsBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
-		else
-			self.optionsBtn:SetPoint("BOTTOMRIGHT", self.keyRing, "BOTTOMLEFT", 0, 0)
-		end
-		self.optionsBtn:SetScript("OnClick", function() 
-			SlashCmdList.CBNIV("")
-			print("Usage: /cbniv |cffffff00command|r")
-		end)
-		
-		-- Button to toggle Sell Junk:
 		if tBag then
+			-- Print Options button 
+			self.optionsBtn = createIconButton("Options", self, Textures.Config, "BOTTOMRIGHT", "Options", tBag)
+			if self.restackBtn then
+				self.optionsBtn:SetPoint("BOTTOMRIGHT", self.restackBtn, "BOTTOMLEFT", 0, 0)
+			elseif self.resetBtn then
+				self.optionsBtn:SetPoint("BOTTOMRIGHT", self.resetBtn, "BOTTOMLEFT", 0, 0)
+			else
+				self.optionsBtn:SetPoint("BOTTOMRIGHT", self.keyRing, "BOTTOMLEFT", 0, 0)
+			end
+			self.optionsBtn:SetScript("OnClick", function() 
+				SlashCmdList.CBNIV("")
+				print("Usage: /cbniv |cffffff00command|r")
+			end)
+			
+			-- Sell Junk button
 			local sjHint = cBnivCfg.SellJunk and "Sell Junk |cffd0d0d0(on)|r" or "Sell Junk |cffd0d0d0(off)|r"
 			self.junkBtn = createIconButton("SellJunk", self, Textures.SellJunk, "BOTTOMRIGHT", sjHint, tBag)
 			if self.optionsBtn then
@@ -668,6 +677,7 @@ function MyContainer:OnCreate(name, settings)
 			else
 				self.junkBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
 			end
+
 			self.junkBtn:SetScript("OnClick", function() 
 				cBnivCfg.SellJunk = not(cBnivCfg.SellJunk)
 				if cBnivCfg.SellJunk then
@@ -679,20 +689,18 @@ function MyContainer:OnCreate(name, settings)
 		end
 
 		-- Tooltip positions
-		local numButtons = 2
-		local btnTable = {self.bagToggle}
-		if self.optionsBtn then numButtons = numButtons + 1; tinsert(btnTable, self.optionsBtn) end
-		if self.restackBtn then numButtons = numButtons + 1; tinsert(btnTable, self.restackBtn) end
-		if tBag then
-			if self.resetBtn then numButtons = numButtons + 1; tinsert(btnTable, self.resetBtn) end
-			if self.junkBtn then numButtons = numButtons + 1; tinsert(btnTable, self.junkBtn) end
-		end
-		if tBank then
-			if self.reagentBtn then numButtons = numButtons + 1; tinsert(btnTable, self.reagentBtn) end
-		end
-		local ttPos = -(numButtons * 15 + 20)
-		if tBank then ttPos = ttPos + 20 end
-		for k,v in pairs(btnTable) do
+		local btnTable = { self.bagToggle }
+		if self.keyRing    then tinsert(btnTable, self.keyRing)    end
+		if self.optionsBtn then tinsert(btnTable, self.optionsBtn) end
+		if self.restackBtn then tinsert(btnTable, self.restackBtn) end
+		if self.resetBtn   then tinsert(btnTable, self.resetBtn)   end
+		if self.junkBtn    then tinsert(btnTable, self.junkBtn)    end
+		if self.reagentBtn then tinsert(btnTable, self.reagentBtn) end
+
+		local numButtons = #btnTable
+		local ttPos = -(numButtons * 17 + 9)
+
+		for _, v in ipairs(btnTable) do
 			v.tooltip:ClearAllPoints()
 			v.tooltip:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", ttPos, 5.5)
 			v.tooltipIcon:ClearAllPoints()

@@ -27,7 +27,6 @@ local itemSlotSize = ns.options.itemSlotSize
 ------------------------------------------
 -- Pixel Perfect Parent Frame
 ------------------------------------------
----
 local PixelPerfectParent = CreateFrame("Frame", "cB_PixelParent", UIParent)
 PixelPerfectParent:SetAllPoints(UIParent)
 
@@ -55,6 +54,9 @@ local function GetClassColor(class)
 	return {classColors.r, classColors.g, classColors.b}
 end
 
+local GetContainerNumFreeSlots, GetContainerNumSlots
+	= GetContainerNumFreeSlots, GetContainerNumSlots
+
 local GetNumFreeSlots = function(bagType)
 	local free, max = 0, 0
 	if bagType == "bag" then
@@ -74,6 +76,7 @@ end
 
 local QuickSort;
 do
+	local table_sort = table.sort
 	local func = function(v1, v2)
 		if (v1 == nil) or (v2 == nil) then return (v1 and true or false) end
 		if v1[1] == -1 or v2[1] == -1 then
@@ -92,7 +95,7 @@ do
 			return v1[4] > v2[4] -- full/larger stacks first
 		end
 	end;
-	QuickSort = function(tbl) table.sort(tbl, func) end
+	QuickSort = function(tbl) table_sort(tbl, func) end
 end
 
 function MyContainer:OnContentsChanged()
@@ -168,6 +171,7 @@ function MyContainer:OnContentsChanged()
 	cB_BagHidden[tName] = (not t) and isEmpty or false
 	cbNivaya:UpdateAnchors(self)
 end
+
 
 --[[function MyContainer:OnButtonAdd(button)
 	if not button.Border then return end
@@ -249,6 +253,7 @@ local resetNewItems = function(self)
 	end
 	cbNivaya:UpdateBags()
 end
+
 function cbNivResetNew()
 	resetNewItems()
 end
@@ -386,7 +391,6 @@ local createIconButton = function (name, parent, texture, point, hint, isBag)
 	
 	return button
 end
-
 
 local GetFirstFreeSlot = function(bagtype)
 	if bagtype == "bag" then
@@ -784,7 +788,7 @@ function MyContainer:OnCreate(name, settings)
 		money:SetShadowColor(0, 0, 0, 0)
 	end
 	
-	self:SetScale(cBnivCfg.scale)
+	self:SetScale(cBnivCfg.scale or 1)
 	return self
 end
 

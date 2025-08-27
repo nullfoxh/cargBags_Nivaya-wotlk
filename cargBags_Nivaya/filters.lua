@@ -1,4 +1,4 @@
-﻿local addon, ns = ...
+local addon, ns = ...
 local cargBags = ns.cargBags
 
 local cbNivaya = cargBags:NewImplementation("Nivaya")
@@ -60,7 +60,6 @@ function cbNivaya:ClassifyItem(item)
 		elseif	(item.type == L.Quest)								then cB_ItemClass[item.id] = "Quest"; return true
 		elseif	(item.type == L.Trades)								then cB_ItemClass[item.id] = "TradeGoods"; return true
 		elseif	(item.type == L.Consumables)						then cB_ItemClass[item.id] = "Consumables"; return true
-		elseif	(item.type == L.BattlePet)							then cB_ItemClass[item.id] = "BattlePet"; return true
 		end
 	end
 	
@@ -79,11 +78,7 @@ function cbNivaya:getItemCount(itemName)
 				local tLink = GetContainerItemLink(i,j)
 				local tName
 				if tLink then
-					if (strsub(tLink, 13, 21) == "battlepet") then
-						tName = select(2, strmatch(tLink, "|H(.-)|h(.-)|h"))
-					else
-						tName = GetItemInfo(tLink)
-					end
+					tName = GetItemInfo(tLink)
 				end
 				if tName == itemName then
 					local _,tStackCount = GetContainerItemInfo(i,j)

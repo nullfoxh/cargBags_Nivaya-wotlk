@@ -753,7 +753,7 @@ function MyContainer:OnCreate(name, settings)
 	if tBag then
 		local infoFrame = CreateFrame("Button", nil, self)
 		infoFrame:SetPoint("BOTTOMLEFT", 5, -6)
-		infoFrame:SetPoint("BOTTOMRIGHT", -86, -6)
+		infoFrame:SetPoint("BOTTOMRIGHT", -106, -6)
 		infoFrame:SetHeight(32)
 
 		-- Search bar

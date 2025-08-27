@@ -62,10 +62,7 @@ local GetNumFreeSlots = function(bagType)
 			free = free + GetContainerNumFreeSlots(i)
 			max = max + GetContainerNumSlots(i)
 		end
-	elseif bagType == "bankReagent" then
-		free = GetContainerNumFreeSlots(-3)
-		max = GetContainerNumSlots(-3)
-	else
+	elseif bagType == "bank" then
 		local containerIDs = {-1,5,6,7,8,9,10,11}
 		for _,i in next, containerIDs do	
 			free = free + GetContainerNumFreeSlots(i)
@@ -680,25 +677,6 @@ function MyContainer:OnCreate(name, settings)
 				end
 			end)
 		end
-		
-		-- Button to send reagents to Reagent Bank:
-		--[[
-		if tBank then
-			local rbHint = REAGENTBANK_DEPOSIT
-			self.reagentBtn = createIconButton("SendReagents", self, Textures.Deposit, "BOTTOMRIGHT", rbHint, tBag)
-			if self.optionsBtn then
-				self.reagentBtn:SetPoint("BOTTOMRIGHT", self.optionsBtn, "BOTTOMLEFT", 0, 0)
-			elseif self.restackBtn then
-				self.reagentBtn:SetPoint("BOTTOMRIGHT", self.restackBtn, "BOTTOMLEFT", 0, 0)
-			else
-				self.reagentBtn:SetPoint("BOTTOMRIGHT", self.bagToggle, "BOTTOMLEFT", 0, 0)
-			end
-			self.reagentBtn:SetScript("OnClick", function()
-				--print("Deposit!!!")
-				DepositReagentBank()
-			end)
-		end
-		]]
 
 		-- Tooltip positions
 		local numButtons = 2

@@ -788,7 +788,6 @@ function MyContainer:OnCreate(name, settings)
 		money:SetShadowColor(0, 0, 0, 0)
 	end
 	
-	self:SetScale(cBnivCfg.scale or 1)
 	return self
 end
 

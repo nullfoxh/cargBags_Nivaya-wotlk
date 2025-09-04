@@ -156,7 +156,6 @@ local optDefaults = {
 					Consumables = true,
 					Quest = true,
 					BankBlack = true,
-					scale = 1,
 					FilterBank = true,
 					CompressEmpty = true,
 					Unlocked = true,
@@ -597,15 +596,6 @@ local function HandleSlash(str)
 	elseif str == 'sortbank' then
 		cBnivCfg.SortBank = not cBnivCfg.SortBank
 		StatusMsg('Auto sorting bank is now ', '. Reload your UI for this change to take effect!', cBnivCfg.SortBank, true, false)
-	elseif str == 'scale' then
-		local t = tonumber(str2)
-		if t then
-			cBnivCfg.scale = t
-			for _,v in pairs(cB_Bags) do v:SetScale(cBnivCfg.scale) end
-			StatusMsgVal('Overall scale has been set to ', '.', cBnivCfg.scale, true)
-		else
-			StatusMsg('You have to specify a value, e.g. /cbniv scale 0.8.', '', nil, true, false)
-		end
 
 	elseif str == 'addbag' then
 		if not bagExists then
@@ -658,7 +648,6 @@ local function HandleSlash(str)
 		StatusMsg('(', ') |cFFFFFF00empty|r - Toggle empty bagspace compression.', cBnivCfg.CompressEmpty, false, true)
 		StatusMsg('(', ') |cFFFFFF00sortbags|r - Toggle auto sorting the bags.', cBnivCfg.SortBags, false, true)
 		StatusMsg('(', ') |cFFFFFF00sortbank|r - Toggle auto sorting the bank.', cBnivCfg.SortBank, false, true)
-		StatusMsgVal('(', ') |cFFFFFF00scale|r [number] - Set the overall scale.', cBnivCfg.scale, false)
 		StatusMsg('', ' |cFFFFFF00addbag|r [name] - Add a custom container.')
 		StatusMsg('', ' |cFFFFFF00delbag|r [name] - Remove a custom container.')
 		StatusMsg('', ' |cFFFFFF00listbags|r - List all custom containers.')
